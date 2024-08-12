@@ -1,7 +1,10 @@
 
 FROM ruby:3.2.2
-WORKDIR /usr/src/app
+
+WORKDIR /app
 COPY Gemfile Gemfile.lock ./
+
 RUN bundle install
 COPY . .
+
 CMD ["ruby", "app.rb"]

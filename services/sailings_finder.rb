@@ -6,7 +6,7 @@ require './services/fastest'
 
 class SailingsFinder < ApplicationService
   def initialize(origin, destination, service)
-    @klass = Object.const_get(service.split('-').map(&:capitalize).join)
+    search_service(service)
     @origin = origin
     @destination = destination
   end
@@ -16,5 +16,13 @@ class SailingsFinder < ApplicationService
     return 'We are currently not supporting this destination port' unless SailingsGraph.nodes[@destination]
 
     @klass.call(@origin, @destination)
+  end
+
+  private
+
+  def search_service(service)
+    @klass = Object.const_get(service.split('-').map(&:capitalize).join)
+  rescue NameError
+    puts 'service not found'
   end
 end
