@@ -28,11 +28,16 @@ class Fastest < ApplicationService
     @shipments.map do |shipment|
       legs = DataSource.sailings.filter do |sailing|
         SailingCost.call(sailing)
+        sailing.delete('euro_rate')
         sailing if shipment.include? sailing['sailing_code']
       end
       sailings << legs
     end
+    fastest = sailings[0]
 
-    sailings.min_by { |elm| Date.parse(elm.last['arrival_date']) }
+    sailings.each do |sailing|
+      fastest = sailing if Date.parse(sailing.last['arrival_date']) < Date.parse(fastest.last['arrival_date'])
+    end
+    fastest
   end
 end
